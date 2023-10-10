@@ -1,9 +1,11 @@
 "use client";
-import { ThemeProvider } from "@emotion/react";
+
+import { ReactNode } from "react";
 import { Header } from "./components/Header";
 import createTheme from "@mui/material/styles/createTheme";
+import ThemeProvider from "@mui/material/styles/ThemeProvider";
 
-export default function Home() {
+export default function AuthLayout({ children }: { children: ReactNode }) {
   const theme = createTheme({
     palette: {
       primary: {
@@ -14,6 +16,7 @@ export default function Home() {
   return (
     <ThemeProvider theme={theme}>
       <Header />
+      {children}
     </ThemeProvider>
   );
 }
