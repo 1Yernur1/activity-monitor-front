@@ -17,7 +17,7 @@ export const Header = () => {
           <Typography variant="h6" component="a" href={pathName} sx={{flexGrow: 1}}>
             Activity Monitoring
           </Typography>
-          <Button variant="contained" href="auth/sign-in">
+          <Button variant="outlined" color="secondary" href="auth/sign-in">
             Sign In
           </Button>
         </Toolbar>
