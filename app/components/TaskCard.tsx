@@ -1,58 +1,51 @@
+import { useState } from "react";
 import {
+  Box,
   Card,
   CardContent,
   Chip,
+  IconButton,
+  Menu,
+  MenuItem,
   Stack,
   Typography,
 } from "@mui/material";
 import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
-import { useEffect, useState } from "react";
+import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
+import TaskCardStyles from "../mui-styles/TaskCardStyles";
+import TaskCardModel from "../model/TaskCardModel";
+import TaskCardFormatter from "../service/TaskCardFormatter";
 
 export interface TaskCardProps {
-  priority: string;
-  title: string;
-  description: string;
-  tags: string[];
-  finishDate: string;
+  taskCard: TaskCardModel;
+  deleteTaskCard: (taskCardId: number) => void;
 }
 
-export const TaskCard = () => {
-  const [priority, setPriority] = useState("");
-  const [title, setTitle] = useState("");
-  const [descriptionText, setDescriptionText] = useState(
-    "Lorem ipsum, dolor sit amet consectetur adipisicing elit." +
-      " Ea ratione provident accusamus, commodi voluptatem optio nostrum" +
-      " temporibus reprehenderit ad nisi? Ex nesciunt expedita quam fuga," +
-      " quibusdam esse perspiciatis deserunt natus!"
-  );
-  const [tags, setTags] = useState<string[]>([]);
-  const [finishDate, setFinishDate] = useState("");
+export const TaskCard = ({
+  taskCard: { id, priority, title, description, tags, finishDate },
+  deleteTaskCard,
+}: TaskCardProps) => {
+  const trunkedDescription = TaskCardFormatter.truncateText(description, 115);
 
-  useEffect(() => {
-    setPriority("epic");
-    setTitle("Hello, card!");
-    setDescriptionText((prevDescriptionText) =>
-      truncateText(prevDescriptionText, 115)
-    );
-    setTags(["first", "second", "third", "fourth"]);
-    setFinishDate("15/10/2023");
-  }, []);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const isOpen = Boolean(anchorEl);
 
-  const truncateText = (text: string, maxChars: number) =>
-    text.length > maxChars ? text.slice(0, maxChars - 3) + "..." : text;
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+
+  const onClickDeleteButtonInFloatingMenu = () => {
+    deleteTaskCard(id);
+    handleClose();
+  };
 
   const renderTagsList = () => {
     return tags.map((tag) => (
       <Chip
         key={tag}
         label={tag}
-        color="default"
         size="small"
-        sx={{
-          textTransform: "uppercase",
-          borderRadius: ".25rem",
-          fontSize: 12,
-        }}
+        sx={TaskCardStyles.tagChipStyles}
       />
     ));
   };
@@ -60,27 +53,30 @@ export const TaskCard = () => {
   return (
     <Card>
       <CardContent>
-        <Chip
-          label={priority}
-          color="info"
-          size="small"
-          sx={{ textTransform: "uppercase", borderRadius: ".25rem" }}
-        />
-        <Typography mt={1}>{title}</Typography>
-        <Typography variant="body2">{descriptionText}</Typography>
+        <Box sx={TaskCardStyles.cardBoxStyles}>
+          <Chip
+            label={priority}
+            color="info"
+            size="small"
+            sx={TaskCardStyles.priorityChipStyles}
+          />
+          <IconButton onClick={handleClick}>
+            <MoreHorizOutlinedIcon />
+          </IconButton>
+          <Menu open={isOpen} anchorEl={anchorEl} onClose={handleClose}>
+            <MenuItem onClick={handleClose}>Edit</MenuItem>
+            <MenuItem onClick={onClickDeleteButtonInFloatingMenu}>
+              Delete
+            </MenuItem>
+          </Menu>
+        </Box>
+        <Typography>{title}</Typography>
+        <Typography variant="body2">{trunkedDescription}</Typography>
         <Stack direction={"row"} alignItems={"center"} spacing={1} mt={1}>
           <AccessAlarmOutlinedIcon />
           <Typography>{finishDate}</Typography>
         </Stack>
-        <Stack
-          direction={"row"}
-          spacing={1}
-          useFlexGap
-          flexWrap={"wrap"}
-          mt={1}
-        >
-          {renderTagsList()}
-        </Stack>
+        <Stack sx={TaskCardStyles.tagListStackStyles}>{renderTagsList()}</Stack>
       </CardContent>
     </Card>
   );

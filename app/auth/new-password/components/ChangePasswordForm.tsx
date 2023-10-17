@@ -1,4 +1,4 @@
-import { VisibilityOff, Visibility } from "@mui/icons-material";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -9,10 +9,10 @@ import {
   InputLabel,
   OutlinedInput,
   Paper,
-  TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
+import ChangePasswordFormStyles from "../mui-styles/ChangePasswordFormStyles";
 
 export const ChangePasswordForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,13 +21,7 @@ export const ChangePasswordForm = () => {
     <Container component="section" maxWidth="xs">
       <Paper
         elevation={1}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          p: 2,
-          mt: 8,
-        }}
+        sx={ChangePasswordFormStyles.wrapperPaperStyles}
       >
         <Typography component="h1" fontWeight={700} fontSize={32}>
           Change password
