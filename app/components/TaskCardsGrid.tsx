@@ -8,6 +8,7 @@ import TaskCardService from "../service/TaskCardService";
 import TaskCardRenderer from "../service/TaskCardRenderer";
 
 export const TaskCardsGrid = () => {
+  const [id, setId] = useState(6);
   const [taskCardsData, setTaskCardsData] = useState<TaskCardModel[]>([]);
   const router = useRouter();
 
@@ -16,8 +17,9 @@ export const TaskCardsGrid = () => {
   }, []);
 
   const onClickAddTaskCardButton = () => {
+    setId(id + 1);
     TaskCardService.addTaskCard({
-      id: taskCardsData.length + 1,
+      id: id,
       priority: "epic",
       title: "Hello, Card!",
       description:
