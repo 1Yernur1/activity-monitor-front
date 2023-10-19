@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import TaskCardModel from "../model/TaskCardModel";
 import TaskCardService from "../service/TaskCardService";
 import { TaskCardsGridBoard } from "../service/TaskCardRenderer";
+import { TaskCardDialog } from "./TaskCardDialog";
 
 export const TaskCardsGrid = () => {
   const [id, setId] = useState(6);
@@ -28,6 +29,14 @@ export const TaskCardsGrid = () => {
   const handleDeleteTaskCard = (selectedId: number) => {
     TaskCardService.deleteTaskCardById(selectedId);
     setTaskCardsData(TaskCardService.getAllTaskCards());
+  };
+
+  const [isOpenTaskCardDialog, setIsOpenTaskCardDialog] = useState(false);
+  const handleOpen = () => {
+    setIsOpenTaskCardDialog(true);
+  };
+  const handleClose = () => {
+    setIsOpenTaskCardDialog(false);
   };
 
   return (

@@ -49,6 +49,9 @@ export const addTask = (task: TaskCardModel) => {
 
 export const getAllTasks = () => tasks;
 
+export const getTaskById = (taskId: number) =>
+  tasks.find((task) => task.id === taskId);
+
 export const removeTaskById = (selectedId: number) => {
   tasks = tasks.filter((taskCard) => taskCard.id !== selectedId);
 };
