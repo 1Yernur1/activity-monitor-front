@@ -3,6 +3,8 @@ import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOu
 import { TaskCard } from "../components/TaskCard";
 import TaskCardModel from "../model/TaskCardModel";
 import TaskCardsGridStyles from "../mui-styles/TaskCardsGridStyles";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 interface TaskCardsListProps {
   taskCardsDataList: TaskCardModel[];
@@ -33,6 +35,7 @@ export const TaskCardsListColumn = ({
   handleDeleteTaskCard,
   onClickAddTaskCardButton,
 }: TaskCardsGridColumnProps) => {
+  const { user } = useContext(AuthContext);
   return (
     <div className="flex flex-col gap-2">
       <Typography sx={TaskCardsGridStyles.gridColumnTitleStyles}>
@@ -42,13 +45,15 @@ export const TaskCardsListColumn = ({
         taskCardsDataList={taskCardsDataList}
         handleDeleteTaskCard={handleDeleteTaskCard}
       />
-      <IconButton
-        color="primary"
-        sx={TaskCardsGridStyles.addTaskCardIconButtonStyles}
-        onClick={onClickAddTaskCardButton}
-      >
-        <AddCircleOutlineOutlinedIcon fontSize="large" />
-      </IconButton>
+      {user && (
+        <IconButton
+          color="primary"
+          sx={TaskCardsGridStyles.addTaskCardIconButtonStyles}
+          onClick={onClickAddTaskCardButton}
+        >
+          <AddCircleOutlineOutlinedIcon fontSize="large" />
+        </IconButton>
+      )}
     </div>
   );
 };

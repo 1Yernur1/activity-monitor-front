@@ -3,6 +3,8 @@ import TaskCardModel from "../model/TaskCardModel";
 import TaskCardService from "../service/TaskCardService";
 import { TaskCardsGridBoard } from "../service/TaskCardRenderer";
 import { TaskCardDialog } from "./TaskCardDialog";
+import { auth } from "@/config/firbaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export const TaskCardsGrid = () => {
   const [id, setId] = useState(6);

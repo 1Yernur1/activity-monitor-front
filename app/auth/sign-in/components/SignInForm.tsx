@@ -1,4 +1,6 @@
 "use client";
+import { AuthContext } from "@/app/context/AuthContext";
+import { auth } from "@/config/firbaseConfig";
 import { LockOutlined, VisibilityOff, Visibility } from "@mui/icons-material";
 import {
   Paper,
@@ -17,54 +19,69 @@ import {
   Button,
   Container,
 } from "@mui/material";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
-import { useState } from "react";
+import { FormEvent, useContext, useState } from "react";
+import SignInFormStyles from "../mui-styles/SignInFormStyles";
+import StaticProperties from "../static-properties/StaticProperties";
+import { useRouter } from "next/navigation";
 
 export const SignInForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isErrorSignIn, setIsErrorSignIn] = useState(false);
+
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const { setUser } = useContext(AuthContext);
+
+  const router = useRouter();
+
+  const signIn = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        setUser(userCredential.user.uid);
+        router.push("/");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setIsErrorSignIn(true);
+      });
+  };
+
   return (
     <Container component="section" maxWidth="xs">
-      <Paper
-        elevation={1}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          p: 2,
-          mt: 8,
-        }}
-      >
-        <Avatar sx={{ bgcolor: "black" }}>
+      <Paper elevation={1} sx={SignInFormStyles.wrapperPaperStyles}>
+        <Avatar sx={SignInFormStyles.avatarIconStyles}>
           <LockOutlined />
         </Avatar>
         <Typography component="h1" fontWeight={700} fontSize={32}>
           Sign In
         </Typography>
-        <Box component="form">
+        <Box component="form" onSubmit={(e) => signIn(e)}>
           <TextField
-            id="email"
-            name="email"
-            label="Email Address"
-            type="email"
-            autoComplete="email"
-            margin="normal"
-            required
-            fullWidth
+            {...StaticProperties.emailInputProperties}
+            error={isErrorSignIn}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
           />
           <FormControl fullWidth required margin="normal">
             <InputLabel>Password</InputLabel>
             <OutlinedInput
               label="password"
               type={showPassword ? "text" : "password"}
+              error={isErrorSignIn}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    edge="end"
-                    onClick={handleClickShowPassword}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  <IconButton edge="end" onClick={handleClickShowPassword}>
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
               }
@@ -81,14 +98,7 @@ export const SignInForm = () => {
               <Link href="forgot-password">Forgot password?</Link>
             </Grid>
           </Grid>
-          <Button
-            type="submit"
-            variant="contained"
-            className="bg-black"
-            href="/"
-            fullWidth
-            sx={{ my: 2 }}
-          >
+          <Button {...StaticProperties.buttonSubmitProperties} sx={{ my: 2 }}>
             Sign In
           </Button>
         </Box>

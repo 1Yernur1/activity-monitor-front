@@ -4,6 +4,7 @@ import createTheme from "@mui/material/styles/createTheme";
 import { ThemeProvider } from "@emotion/react";
 import { Header } from "./components/Header";
 import { TaskCardsGrid } from "./components/TaskCardsGrid";
+import { AuthProvider } from "./context/AuthContext";
 import Loading from "./loading";
 
 export default function Home() {
@@ -20,14 +21,16 @@ export default function Home() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <ThemeProvider theme={theme}>
-        <div className="h-screen flex flex-col">
-          <Header />
-          <div className="flex-1 flex justify-center overflow-auto">
-            <TaskCardsGrid />
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <div className="h-screen flex flex-col">
+            <Header />
+            <div className="flex-1 flex justify-center overflow-auto">
+              <TaskCardsGrid />
+            </div>
           </div>
-        </div>
-      </ThemeProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </Suspense>
   );
 }
