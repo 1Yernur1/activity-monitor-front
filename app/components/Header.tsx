@@ -27,13 +27,18 @@ export const Header = () => {
               color="secondary"
               onClick={() => {
                 signOut(auth);
-                router.refresh();
               }}
             >
               Sign out
             </Button>
           ) : (
-            <Button variant="outlined" color="secondary" href="auth/sign-in">
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => {
+                router.push("auth/sign-in");
+              }}
+            >
               Sign in
             </Button>
           )}

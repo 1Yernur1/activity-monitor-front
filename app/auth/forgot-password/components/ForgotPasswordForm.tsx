@@ -14,21 +14,26 @@ import {
   sendSignInLinkToEmail,
   verifyPasswordResetCode,
 } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export const ForgotPassword = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
+  const [isSendEmailButtonDisabled, setIsSendEmailButtonDisabled] = useState(false);
+
   const handleClickResetPassword = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsSendEmailButtonDisabled(true);
     sendPasswordResetEmail(auth, email)
       .then((res) => {
-        console.log("All fine");
-        console.log(res);
+        router.push("/auth/sign-in");
+        setIsSendEmailButtonDisabled(false);
       })
       .catch((error) => {
-        console.log("something wrong");
         const errorCode = error.code;
         const errorMessage = error.message;
+        setIsSendEmailButtonDisabled(false);
       });
 
     // const actionCodeSettings: ActionCodeSettings = {
@@ -93,6 +98,7 @@ export const ForgotPassword = () => {
             variant="contained"
             className="bg-black"
             fullWidth
+            disabled={isSendEmailButtonDisabled}
             sx={{ mt: 2 }}
           >
             Send Email

@@ -30,6 +30,7 @@ export const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isErrorSignIn, setIsErrorSignIn] = useState(false);
+  const [isSignButtonDisabled, setIsSignButtonDisabled] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -38,17 +39,20 @@ export const SignInForm = () => {
 
   const router = useRouter();
 
-  const signIn = (event: FormEvent<HTMLFormElement>) => {
+  const handleSignIn = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsSignButtonDisabled(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setUser(userCredential.user.uid);
         router.push("/");
+        setIsSignButtonDisabled(false);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         setIsErrorSignIn(true);
+        setIsSignButtonDisabled(false);
       });
   };
 
@@ -61,7 +65,7 @@ export const SignInForm = () => {
         <Typography component="h1" fontWeight={700} fontSize={32}>
           Sign In
         </Typography>
-        <Box component="form" onSubmit={(e) => signIn(e)}>
+        <Box component="form" onSubmit={(e) => handleSignIn(e)}>
           <TextField
             {...StaticProperties.emailInputProperties}
             error={isErrorSignIn}
@@ -98,7 +102,7 @@ export const SignInForm = () => {
               <Link href="forgot-password">Forgot password?</Link>
             </Grid>
           </Grid>
-          <Button {...StaticProperties.buttonSubmitProperties} sx={{ my: 2 }}>
+          <Button {...StaticProperties.buttonSubmitProperties} disabled={isSignButtonDisabled} sx={{ my: 2 }}>
             Sign In
           </Button>
         </Box>

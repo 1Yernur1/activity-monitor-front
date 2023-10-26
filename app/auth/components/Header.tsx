@@ -7,7 +7,7 @@ export const Header = () => {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Typography variant="h6" component="a" href={pathName}>
+          <Typography variant="h6" component="a" href="/">
             Activity Monitoring
           </Typography>
         </Toolbar>
