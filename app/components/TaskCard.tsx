@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Box,
   Card,
@@ -15,6 +15,7 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import TaskCardStyles from "../mui-styles/TaskCardStyles";
 import TaskCardModel from "../model/TaskCardModel";
 import TaskCardFormatter from "../service/TaskCardFormatter";
+import { AuthContext } from "../context/AuthContext";
 
 export interface TaskCardProps {
   taskCard: TaskCardModel;
@@ -25,6 +26,7 @@ export const TaskCard = ({
   taskCard: { id, priority, title, description, tags, finishDate },
   deleteTaskCard,
 }: TaskCardProps) => {
+  const { user } = useContext(AuthContext);
   const trunkedDescription = TaskCardFormatter.truncateText(description, 115);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -60,15 +62,19 @@ export const TaskCard = ({
             size="small"
             sx={TaskCardStyles.priorityChipStyles}
           />
-          <IconButton onClick={handleClick}>
-            <MoreHorizOutlinedIcon />
-          </IconButton>
-          <Menu open={isOpen} anchorEl={anchorEl} onClose={handleClose}>
-            <MenuItem onClick={handleClose}>Edit</MenuItem>
-            <MenuItem onClick={onClickDeleteButtonInFloatingMenu}>
-              Delete
-            </MenuItem>
-          </Menu>
+          {user && (
+            <>
+              <IconButton onClick={handleClick}>
+                <MoreHorizOutlinedIcon />
+              </IconButton>
+              <Menu open={isOpen} anchorEl={anchorEl} onClose={handleClose}>
+                <MenuItem onClick={handleClose}>Edit</MenuItem>
+                <MenuItem onClick={onClickDeleteButtonInFloatingMenu}>
+                  Delete
+                </MenuItem>
+              </Menu>
+            </>
+          )}
         </Box>
         <Typography>{title}</Typography>
         <Typography variant="body2">{trunkedDescription}</Typography>
