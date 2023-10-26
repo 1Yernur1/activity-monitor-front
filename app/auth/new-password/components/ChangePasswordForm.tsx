@@ -32,7 +32,9 @@ export const ChangePasswordForm = () => {
     e.preventDefault();
     if (searchParams.get("oobCode")) {
       const searchParam = searchParams.get("oobCode");
-      setOobCode(searchParam);
+      if (searchParam) {
+        setOobCode(searchParam);
+      }
     }
     // verifyPasswordResetCode(auth, oddCode)
     //   .then(() => {
