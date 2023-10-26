@@ -24,18 +24,12 @@ export const ChangePasswordForm = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isErrorNewPassword, setIsErrorNewPassword] = useState(false);
-  const [oobCode, setOobCode] = useState("");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleChangePassword = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (searchParams.get("oobCode")) {
-      const searchParam = searchParams.get("oobCode");
-      if (searchParam) {
-        setOobCode(searchParam);
-      }
-    }
+    const oobCode = searchParams.get("oobCode");
     // verifyPasswordResetCode(auth, oddCode)
     //   .then(() => {
     //     console.log("verification good");
@@ -43,7 +37,7 @@ export const ChangePasswordForm = () => {
     //   .catch(() => {
     //     console.log("verification bad");
     //   });
-    if (newPassword === confirmPassword) {
+    if (newPassword === confirmPassword && oobCode) {
       confirmPasswordReset(auth, oobCode, newPassword)
         .then(() => {
           setIsErrorNewPassword(false);
