@@ -19,6 +19,7 @@ import {
   Checkbox,
   Button,
   Container,
+  FormHelperText,
 } from "@mui/material";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import SignInFormStyles from "../mui-styles/SignInFormStyles";
@@ -64,6 +65,11 @@ export const SignInForm = () => {
           Sign In
         </Typography>
         <Box component="form" onSubmit={(e) => handleSignIn(e)}>
+          {isErrorSignIn && (
+            <FormHelperText className="text-red-500 text-center text-base">
+              Wrong Email or Password
+            </FormHelperText>
+          )}
           <TextField
             {...StaticProperties.emailInputProperties}
             error={isErrorSignIn}
