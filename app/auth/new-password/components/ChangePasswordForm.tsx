@@ -1,25 +1,23 @@
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import {
   Box,
   Button,
   Container,
   FormControl,
-  IconButton,
-  InputAdornment,
   InputLabel,
   OutlinedInput,
   Paper,
   Typography,
 } from "@mui/material";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
 import ChangePasswordFormStyles from "../mui-styles/ChangePasswordFormStyles";
 import { confirmPasswordReset } from "firebase/auth";
 import { auth } from "@/config/firbaseConfig";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ShowPasswordIcon } from "../../service/SignInRenderer";
 
 export const ChangePasswordForm = () => {
-  const searchParams = useSearchParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,20 +25,20 @@ export const ChangePasswordForm = () => {
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const handleChangePassword = (e: FormEvent<HTMLFormElement>) => {
+  const handleChangeNewPasswordField = (
+    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => setNewPassword(event.target.value);
+
+  const handleChangeConfirmPasswordField = (
+    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => setConfirmPassword(event.target.value);
+
+  const handleSubmitNewPassword = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const oobCode = searchParams.get("oobCode");
-    // verifyPasswordResetCode(auth, oddCode)
-    //   .then(() => {
-    //     console.log("verification good");
-    //   })
-    //   .catch(() => {
-    //     console.log("verification bad");
-    //   });
     if (newPassword === confirmPassword && oobCode) {
       confirmPasswordReset(auth, oobCode, newPassword)
         .then(() => {
-          setIsErrorNewPassword(false);
           router.push("/auth/sign-in");
         })
         .catch(() => {
@@ -57,31 +55,18 @@ export const ChangePasswordForm = () => {
         <Typography component="h1" fontWeight={700} fontSize={32}>
           Change password
         </Typography>
-        <Box
-          component="form"
-          onSubmit={(e) => {
-            handleChangePassword(e);
-          }}
-        >
+        <Box component="form" onSubmit={handleSubmitNewPassword}>
           <FormControl fullWidth required margin="normal">
             <InputLabel>New Password</InputLabel>
             <OutlinedInput
               label="New Password"
               type={showPassword ? "text" : "password"}
               error={isErrorNewPassword}
-              onChange={(e) => {
-                setNewPassword(e.target.value);
-              }}
+              onChange={handleChangeNewPasswordField}
               endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    edge="end"
-                    onClick={handleClickShowPassword}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
+                <ShowPasswordIcon
+                  {...{ showPassword, handleClickShowPassword }}
+                />
               }
             />
           </FormControl>
@@ -91,19 +76,11 @@ export const ChangePasswordForm = () => {
               label="Confirm New Password"
               type={showPassword ? "text" : "password"}
               error={isErrorNewPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-              }}
+              onChange={handleChangeConfirmPasswordField}
               endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    edge="end"
-                    onClick={handleClickShowPassword}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
+                <ShowPasswordIcon
+                  {...{ showPassword, handleClickShowPassword }}
+                />
               }
             />
           </FormControl>

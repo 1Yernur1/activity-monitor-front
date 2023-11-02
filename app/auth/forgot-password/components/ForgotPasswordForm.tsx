@@ -8,90 +8,43 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  ActionCodeSettings,
-  sendPasswordResetEmail,
-  sendSignInLinkToEmail,
-  verifyPasswordResetCode,
-} from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
+import StaticProperties from "../static-properties/StaticProperties";
+import ForgotPasswordFormStyles from "../mui-styles/ForgotPasswordFormStyles";
 
 export const ForgotPassword = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [isSendEmailButtonDisabled, setIsSendEmailButtonDisabled] = useState(false);
+  const [isSendEmailButtonDisabled, setIsSendEmailButtonDisabled] =
+    useState(false);
 
-  const handleClickResetPassword = (event: FormEvent<HTMLFormElement>) => {
+  const handleChangeEmailField = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => setEmail(event.target.value);
+
+  const handleSubmitResetPassword = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSendEmailButtonDisabled(true);
     sendPasswordResetEmail(auth, email)
-      .then((res) => {
+      .then(() => {
         router.push("/auth/sign-in");
-        setIsSendEmailButtonDisabled(false);
       })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+      .catch(() => {
         setIsSendEmailButtonDisabled(false);
       });
-
-    // const actionCodeSettings: ActionCodeSettings = {
-    //   url: "http://localhost:3000/auth/forgot-password",
-    //   iOS: {
-    //     bundleId: "com.example.ios",
-    //   },
-    //   android: {
-    //     packageName: "com.example.android",
-    //     installApp: true,
-    //     minimumVersion: "12",
-    //   },
-    //   handleCodeInApp: true,
-    //   dynamicLinkDomain: "http://localhost:3000/auth/forgot-password"
-    // };
-
-    // sendPasswordResetEmail(auth, email, actionCodeSettings)
-    //   .then((response) => {
-    //     console.log("All fine");
-    //     console.log(response);
-    //   })
-    //   .catch((error) => {
-    //     console.log("Something wrong");
-    //   });
   };
   return (
     <Container component="section" maxWidth="xs">
-      <Paper
-        elevation={1}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          p: 2,
-          mt: 8,
-        }}
-      >
+      <Paper elevation={1} sx={ForgotPasswordFormStyles.wrapperPaperStyles}>
         <Typography component="h1" fontWeight={700} fontSize={32}>
           Reset your password
         </Typography>
-        <Box
-          component="form"
-          onSubmit={(e) => {
-            handleClickResetPassword(e);
-          }}
-        >
+        <Box component="form" onSubmit={handleSubmitResetPassword}>
           <TextField
-            id="email"
-            name="email"
-            label="Email Address"
-            type="email"
-            autoComplete="email"
-            margin="normal"
-            required
-            fullWidth
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
+            {...StaticProperties.emailInputProperties}
+            onChange={handleChangeEmailField}
           />
           <Button
             type="submit"

@@ -1,7 +1,10 @@
 "use client";
+import Link from "next/link";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AuthContext } from "@/app/context/AuthContext";
 import { auth } from "@/config/firbaseConfig";
-import { LockOutlined, VisibilityOff, Visibility } from "@mui/icons-material";
+import { LockOutlined } from "@mui/icons-material";
 import {
   Paper,
   Avatar,
@@ -11,8 +14,6 @@ import {
   FormControl,
   InputLabel,
   OutlinedInput,
-  InputAdornment,
-  IconButton,
   Grid,
   FormControlLabel,
   Checkbox,
@@ -20,24 +21,24 @@ import {
   Container,
 } from "@mui/material";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import Link from "next/link";
-import { FormEvent, useContext, useState } from "react";
 import SignInFormStyles from "../mui-styles/SignInFormStyles";
 import StaticProperties from "../static-properties/StaticProperties";
-import { useRouter } from "next/navigation";
+import { ShowPasswordIcon } from "../../service/SignInRenderer";
 
 export const SignInForm = () => {
+  const router = useRouter();
+  const { setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isErrorSignIn, setIsErrorSignIn] = useState(false);
   const [isSignButtonDisabled, setIsSignButtonDisabled] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const { setUser } = useContext(AuthContext);
-
-  const router = useRouter();
+  const handleChangeEmailInputField = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => setEmail(event.target.value);
 
   const handleSignIn = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,11 +47,8 @@ export const SignInForm = () => {
       .then((userCredential) => {
         setUser(userCredential.user.uid);
         router.push("/");
-        setIsSignButtonDisabled(false);
       })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+      .catch(() => {
         setIsErrorSignIn(true);
         setIsSignButtonDisabled(false);
       });
@@ -69,9 +67,7 @@ export const SignInForm = () => {
           <TextField
             {...StaticProperties.emailInputProperties}
             error={isErrorSignIn}
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
+            onChange={handleChangeEmailInputField}
           />
           <FormControl fullWidth required margin="normal">
             <InputLabel>Password</InputLabel>
@@ -83,11 +79,9 @@ export const SignInForm = () => {
                 setPassword(e.target.value);
               }}
               endAdornment={
-                <InputAdornment position="end">
-                  <IconButton edge="end" onClick={handleClickShowPassword}>
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
+                <ShowPasswordIcon
+                  {...{ showPassword, handleClickShowPassword }}
+                />
               }
             />
           </FormControl>
@@ -102,7 +96,11 @@ export const SignInForm = () => {
               <Link href="forgot-password">Forgot password?</Link>
             </Grid>
           </Grid>
-          <Button {...StaticProperties.buttonSubmitProperties} disabled={isSignButtonDisabled} sx={{ my: 2 }}>
+          <Button
+            {...StaticProperties.buttonSubmitProperties}
+            disabled={isSignButtonDisabled}
+            sx={{ my: 2 }}
+          >
             Sign In
           </Button>
         </Box>
